@@ -1,5 +1,5 @@
 const User = require("../user/user.model");
-const { hashPassword, generateToken } = require("./auth.utils");
+const { hashPassword, checkPassword, generateToken } = require("./auth.utils");
 
 module.exports.doSignup = async (req, res) => {
   //Picking out the needed item from the request body
@@ -47,8 +47,12 @@ module.exports.doSignup = async (req, res) => {
 };
 
 module.exports.doLogin = async (req, res) => {
-  const { email, body } = req.body;
+  const { email, password } = req.body;
 
   try {
+    const userExist = User.findOne({ email });
+    if (userExist) {
+      checkPassword(userExist.password, password);
+    }
   } catch (error) {}
 };

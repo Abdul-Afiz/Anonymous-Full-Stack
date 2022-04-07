@@ -8,6 +8,11 @@ module.exports.hashPassword = (password) => {
   return bcrypt.hashSync(password, salt);
 };
 
+//creating a password function to encrypt password into hash
+module.exports.checkPassword = (hashpassword, password) => {
+  return bcrypt.compareSync(hashpassword, password);
+};
+
 module.exports.generateToken = (payload) => {
   return jwt.sign(payload, secretKey, {
     expiresIn: "2 days",
