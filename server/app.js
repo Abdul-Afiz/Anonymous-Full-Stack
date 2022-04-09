@@ -11,20 +11,14 @@ mongoose.connect(MONGODB).then(() => {
   console.log("connected successfully");
 });
 
-// .then(() => {
-//   console.log("DB Connected Successfully");
-// })
-// .catch((err) => {
-//   console.log("DB Connected Error");
-//   console.log(err);
-// });
-
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
 
 const apiRouter = require("./app.router");
 app.use("/v1", apiRouter);
+
+const { router } = require("./components/auth/auth.routes");
 
 app.get("/", (req, res) => {
   res.json({ message: "hurray the server is up and running" });

@@ -1,6 +1,8 @@
 const User = require("../user/user.model");
 const { hashPassword, checkPassword, generateToken } = require("./auth.utils");
 
+const { responseError } = require("../../utils/helpers");
+
 module.exports.doSignup = async (req, res) => {
   //Picking out the needed item from the request body
   const { name, email, password } = req.body;
@@ -39,10 +41,7 @@ module.exports.doSignup = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log({ err, location: "doSignup" });
-    return res.status(500).json({
-      message: "internal server error",
-    });
+    responseError(res, err, "doSignUp");
   }
 };
 
@@ -50,9 +49,34 @@ module.exports.doLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const userExist = User.findOne({ email });
-    if (userExist) {
-      checkPassword(userExist.password, password);
+    const user = User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({
+        message: "incorrect login credential",
+      });
     }
-  } catch (error) {}
+    if (!checkPassword(password, user.password)) {
+      return res.status(401).json({
+        message: "incorrect login credentials",
+      });
+    }
+
+    const token = generateToken({
+      name: user.name,
+      email: user.email,
+      uniqueId: user.uniqueId,
+    });
+
+    return res.status(200).json({
+      message: "welcome back",
+      token,
+      user: {
+        name: user.name,
+        email: user.email,
+        uniqueId: user.uniqueId,
+      },
+    });
+  } catch (err) {
+    responseError(res, err, "doLogin");
+  }
 };

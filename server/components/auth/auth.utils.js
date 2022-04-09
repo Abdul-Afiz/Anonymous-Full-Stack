@@ -9,12 +9,21 @@ module.exports.hashPassword = (password) => {
 };
 
 //creating a password function to encrypt password into hash
-module.exports.checkPassword = (hashpassword, password) => {
-  return bcrypt.compareSync(hashpassword, password);
+module.exports.checkPassword = (password, hashpassword) => {
+  return bcrypt.compareSync(password, hashpassword);
 };
 
 module.exports.generateToken = (payload) => {
   return jwt.sign(payload, secretKey, {
     expiresIn: "2 days",
+  });
+};
+
+module.exports.verifyToken = (token) => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, secretKey, (err, decoded) => {
+      if (err) reject(err);
+      resolve(decoded);
+    });
   });
 };
