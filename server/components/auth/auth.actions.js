@@ -49,7 +49,8 @@ module.exports.doLogin = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = User.findOne({ email });
+    const user = await User.findOne({ email });
+    console.log("doLogin::", { user });
     if (!user) {
       return res.status(401).json({
         message: "incorrect login credential",

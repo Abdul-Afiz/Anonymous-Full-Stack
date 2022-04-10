@@ -18,7 +18,8 @@ app.use(cors());
 const apiRouter = require("./app.router");
 app.use("/v1", apiRouter);
 
-const { router } = require("./components/auth/auth.routes");
+const router = require("./components/auth/auth.routes");
+app.use(router);
 
 app.get("/", (req, res) => {
   res.json({ message: "hurray the server is up and running" });
